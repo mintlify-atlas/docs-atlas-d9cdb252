@@ -1,0 +1,57 @@
+---
+title: "Contact Page: Encrypted Transmission Form and Social Links"
+sidebarTitle: "Contact"
+description: "The Contact page presents a message form styled as an encrypted transmission terminal, with alternative channels for GitHub, LinkedIn, email, and RSS."
+---
+
+The Contact page frames outreach as a secure transmission operation. The left panel contains a form styled as a hardened terminal interface — input fields are labeled with operational jargon, and a status banner at the top of the panel reads **"STATUS: ACCEPTING TRANSMISSIONS"** with a pulsing green indicator dot. Submitting the form first transitions to a simulated encryption state showing **"ENCRYPTING..."** before resolving to a **"TRANSMISSION SUCCESSFUL"** confirmation screen with a link to reset the form. The right panel lists alternative contact channels for visitors who prefer a direct route.
+
+## Route
+
+The Contact page is served at `/#/contact`. The static shell for direct linking is `pages/Contact.html`.
+
+## Form Fields
+
+| Label | Input Type | Placeholder |
+|---|---|---|
+| IDENTIFICATION (NAME) | `text` | `"Enter designation..."` |
+| RETURN FREQUENCY (EMAIL) | `email` | `"Enter return coordinates..."` |
+| SUBJECT OF INQUIRY | `text` | `"State purpose..."` |
+| MESSAGE BODY | `textarea` (5 rows) | `"Begin transmission..."` |
+
+All fields map directly to their respective HTML `<input>` or `<textarea>` elements. The `name` attributes follow the field label slugs for form-handler compatibility.
+
+## Submission States
+
+The form cycles through three discrete states managed by a local `useState` hook:
+
+| State | UI Behaviour |
+|---|---|
+| `idle` | Default form with all fields enabled and the submit button active |
+| `transmitting` | Submit button label changes to `"ENCRYPTING..."` and is disabled; inputs are read-only |
+| `sent` | Entire form is replaced by a `"TRANSMISSION SUCCESSFUL"` confirmation block with a **"Send another transmission"** reset link that returns to `idle` |
+
+The `transmitting` → `sent` transition fires after a simulated 1 500 ms delay.
+
+## Alternative Channels
+
+The right sidebar panel lists four contact channels as styled link rows:
+
+<CardGroup cols={2}>
+  <Card title="GitHub" icon="github" href="https://github.com">
+    Source repositories and contribution history.
+  </Card>
+  <Card title="Direct Mail" icon="envelope" href="mailto:">
+    Marked **PREFERRED** in the UI. Direct email contact with no intermediary form.
+  </Card>
+  <Card title="LinkedIn" icon="linkedin" href="https://linkedin.com">
+    Professional profile and endorsements.
+  </Card>
+  <Card title="Writing Archive" icon="book-open" href="/pages/writing">
+    Browse the full archive of field notes, reports, and technical articles.
+  </Card>
+</CardGroup>
+
+<Note>
+  The form submission handler (`onSubmit`) is a local stub that simulates a 1 500 ms delay before transitioning to the `sent` state. Wire it up to a real email service — such as [Formspree](https://formspree.io), [Resend](https://resend.com), or [EmailJS](https://emailjs.com) — to make it functional in production.
+</Note>

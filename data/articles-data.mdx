@@ -1,0 +1,94 @@
+---
+title: "Articles Data: Writing Archive Entries and Field Reports"
+sidebarTitle: "Articles Data"
+description: "The articles.js module exports the articles array for the Writing page — each entry has an id, type classification, title, date, read time, abstract, and content."
+---
+
+The `data/articles.js` module exports the `articles` array consumed by both the Writing list page and the individual article view. Each article entry is a self-contained object that carries the full body content alongside its metadata — there is no separate content directory or CMS. The list page renders each article's title, type stamp, date, and abstract; the individual article view at `/#/writing/:id` renders the full `content` field as prose.
+
+## Article Schema
+
+```ts
+interface Article {
+  id: string;    // e.g. "art-001" — used directly as the URL segment /writing/:id
+  type: 'INCIDENT REPORT' | 'TECHNICAL' | 'REFLECTION' | 'FOR-GEN-AUDIENCE';
+  title: string;
+  date: string;  // ISO 8601 date, e.g. "2023-10-14"
+  readTime: string; // e.g. "6 MIN"
+  abstract: string; // One-paragraph summary shown in the list view and article header
+  content: string;  // Full article body, rendered as prose in the individual article view
+}
+```
+
+## Article Types
+
+Each `type` value maps to a `ClassificationStamp` variant and signals the nature of the writing to visitors before they open it.
+
+| Type | Stamp Variant | Use Case |
+|---|---|---|
+| `INCIDENT REPORT` | magenta | Post-mortems, bug retrospectives, and war stories |
+| `TECHNICAL` | cyan | Deep technical tutorials, architecture analysis, and how-tos |
+| `REFLECTION` | cyan | Personal perspective, career thoughts, and lessons learned |
+| `FOR-GEN-AUDIENCE` | cyan | Accessible explainers written for non-technical readers |
+
+## Current Articles
+
+The writing archive currently contains four entries.
+
+**The Great State Collapse of 2023** (`art-001`)
+- Type: INCIDENT REPORT · Date: 2023-10-14 · Read time: 6 MIN
+- A post-mortem of a cascading state management failure — what went wrong, why it spread, and how it was contained.
+
+**Building Resilient Data Fetching Layers** (`art-002`)
+- Type: TECHNICAL · Date: 2024-02-02 · Read time: 8 MIN
+- A technical deep-dive into structuring data fetching to survive network failures, stale responses, and race conditions.
+
+**Why I Stopped Using CSS Frameworks (And Why I Started Again)** (`art-003`)
+- Type: REFLECTION · Date: 2024-05-18 · Read time: 5 MIN
+- A candid reflection on the cycle of adopting, abandoning, and re-embracing utility-first CSS — and what actually changed the second time.
+
+**What Actually Happens When You Click "Buy"** (`art-004`)
+- Type: FOR-GEN-AUDIENCE · Date: 2024-08-30 · Read time: 10 MIN
+- A jargon-free walkthrough of the full e-commerce transaction pipeline, written for readers with no technical background.
+
+## Adding an Article
+
+<Steps>
+  <Step title="Open the data module">
+    Open `data/articles.js` in your editor.
+  </Step>
+  <Step title="Add a new object to the articles array">
+    Append a new entry at the end of the `articles` array (or insert it in your preferred chronological position). Assign the next sequential `id`.
+
+    ```js
+    {
+      id: "art-005",
+      type: "TECHNICAL",
+      title: "The Hidden Cost of Re-renders",
+      date: "2025-03-10",
+      readTime: "7 MIN",
+      abstract: "A look at why React re-renders more than you think, and the profiling techniques that expose it.",
+      content: `Your full article body goes here...`,
+    }
+    ```
+  </Step>
+  <Step title="Choose an article type">
+    Set `type` to one of the four valid values. This controls the `ClassificationStamp` color and sets reader expectations about the nature of the content.
+  </Step>
+  <Step title="Write the abstract and content">
+    The `abstract` is displayed on the Writing list page and at the top of the article view — keep it to one focused paragraph. The `content` field holds the complete article body and is rendered as prose in the detail view.
+  </Step>
+  <Step title="Rebuild the project">
+    Save your changes and run the build to publish the new article.
+
+    ```bash
+    npm run build
+    ```
+
+    The new article will be accessible at `/#/writing/art-005`.
+  </Step>
+</Steps>
+
+<Warning>
+  The `id` field is used directly as the URL slug. Use lowercase, hyphen-separated strings (e.g. `art-005`) to avoid routing issues. Changing an existing article's `id` after publishing will break any external links to that article.
+</Warning>

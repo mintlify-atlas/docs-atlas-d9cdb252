@@ -1,0 +1,49 @@
+---
+title: "Home Page: Dossier Landing and Navigation Hub"
+sidebarTitle: "Home"
+description: "The Home page introduces the Developer Dossier portfolio with a hero section and navigation links to About, Projects, Skills, Writing, and Contact."
+---
+
+The Home page is the entry point of Developer Dossier. It establishes the classified intelligence dossier aesthetic immediately: a fixed radial-gradient ambient glow sits behind a `bg-classified-pattern` dot-grid canvas, and the foreground renders a large display heading with the portfolio owner's codename/designation, a short operational tagline, and call-to-action links that route visitors into the rest of the portfolio. Every element is framed by classification stamps and redaction-style typography to signal the theme before a single piece of real content is read.
+
+## Route
+
+The Home page is served at the hash route `/#/`. The static HTML shell is `index.html` at the project root; it contains only a `<div id="root">` mount point — all content is client-rendered by React after the Vite bundle loads.
+
+```
+/          →  index.html  →  <App /> mounts <HomePage />
+```
+
+## Layout
+
+The hero area is structured in three visual layers:
+
+1. **Classification stamp** — a `ClassificationStamp` badge anchored to the top of the viewport, labeling the entire page with its clearance tier.
+2. **Display heading block** — the subject's codename/designation rendered in a large, tracked-out monospace font, followed by a one-line operational tagline.
+3. **CTA links** — two primary navigation anchors directing visitors to `/about` (subject file) and `/projects` (operations archive), styled as terminal command buttons.
+
+The background combines a `bg-classified-pattern` dot-grid overlay (CSS background-image) with a viewport-fixed radial gradient that produces the signature green-on-dark ambient glow throughout the page.
+
+## Data Dependencies
+
+The Home page pulls from three data modules to populate its preview sections:
+
+<CardGroup cols={3}>
+  <Card title="about.js" icon="user-secret" href="/pages/about">
+    Provides the subject designation string and a sampled subset of `behaviorFlags` for the hero tagline and a brief personality summary block.
+  </Card>
+  <Card title="projects.js" icon="folder-closed" href="/pages/projects">
+    Supplies a featured projects preview — typically the two most recently updated entries — rendered as compact case-file cards below the hero.
+  </Card>
+  <Card title="skills.js" icon="chart-bar" href="/pages/skills">
+    Used to derive a total skill count displayed in the hero as a quick-glance stat (e.g. "23 capabilities on record").
+  </Card>
+</CardGroup>
+
+## Rendering Notes
+
+<Note>
+  The page is entirely client-rendered. The `index.html` shell contains no meaningful markup beyond the `<div id="root">` mount point and the Vite script tag. Disabling JavaScript will produce a blank page.
+</Note>
+
+The `bg-classified-pattern` dot grid is applied as a CSS `background-image` on the root layout wrapper and bleeds edge-to-edge. The radial gradient glow is set to `background-attachment: fixed` so it remains stationary as the user scrolls, giving the impression of a persistent light source behind the content.

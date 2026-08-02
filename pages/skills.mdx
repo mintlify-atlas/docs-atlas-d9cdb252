@@ -1,0 +1,65 @@
+---
+title: "Skills Page: Proficiency Ratings Across Six Technical Domains"
+sidebarTitle: "Skills"
+description: "The Skills page shows proficiency ratings across six categories using animated LedMeter bars, displaying every skill from TypeScript to Playwright."
+---
+
+The Skills page renders all skill categories as labeled rows, pairing each skill name with a `LedMeter` component — a segmented bar styled after retro LED level meters — that animates its segments into view as the row enters the viewport during scroll. This provides a visually distinctive alternative to the flat percentage bars found in most portfolio templates, and keeps the intelligence-hardware aesthetic consistent with the rest of the dossier.
+
+## Route
+
+The Skills page is served at `/#/skills`. The static shell for direct linking is `data/skills.html`.
+
+## Skill Categories
+
+All six categories and their skills, with proficiency rated on a scale of 1–5:
+
+| Category | Skills (proficiency / 5) |
+|---|---|
+| `LANGUAGES` | TypeScript (5), JavaScript (5), Python (4), Rust (2), SQL (4) |
+| `WEB INTERFACES` | React (5), Tailwind CSS (5), Framer Motion (4), Vue (3), Accessibility / a11y (4) |
+| `SERVER & DATA` | Node.js (4), PostgreSQL (4), Redis (3), GraphQL (4), REST APIs (5) |
+| `TOOLING & VERSIONING` | Git (5), Docker (3), Webpack / Vite (4), CI/CD Pipelines (3) |
+| `INVESTIGATIVE` | Jest / Vitest (4), Playwright (4), Performance Profiling (3), Debugging (5) |
+| `COMMUNICATIONS` | Technical Writing (5), System Architecture Docs (4), UI/UX Sensibility (4) |
+
+### Proficiency Scale
+
+| Value | Meaning |
+|---|---|
+| 1 | Awareness — familiar with concepts, minimal hands-on use |
+| 2 | Novice — can complete guided tasks |
+| 3 | Practitioner — independent use on real projects |
+| 4 | Advanced — production experience, can mentor others |
+| 5 | Expert — deep internals knowledge, go-to resource |
+
+## Skills Data Shape
+
+Each entry in `data/skills.js` conforms to the following TypeScript-equivalent interface:
+
+```ts
+interface SkillCategory {
+  category: string;          // Display name, e.g. "LANGUAGES"
+  skills: Array<{
+    name: string;            // Display name, e.g. "TypeScript"
+    proficiency: 1 | 2 | 3 | 4 | 5;
+  }>;
+}
+```
+
+The `skills` array within each category is ordered by descending `proficiency` so the strongest skills appear first in each row group.
+
+## Components Used
+
+<CardGroup cols={2}>
+  <Card title="LedMeter" icon="sliders" href="/components/led-meter">
+    Renders a row of LED-style segments (1–5) that animate in sequence as the component enters the viewport. Accepts a `value` prop (1–5) and an optional `label` string.
+  </Card>
+  <Card title="TabDivider" icon="minus" href="/components/tab-divider">
+    Renders the category header between skill groups, styled as a tabbed section break consistent with the rest of the dossier layout.
+  </Card>
+</CardGroup>
+
+<Note>
+  The `LedMeter` animation is driven by an `IntersectionObserver`. Skills that are off-screen on initial load will not begin their fill animation until they scroll into the viewport, ensuring the effect is always visible to the user rather than completing before they reach the section.
+</Note>

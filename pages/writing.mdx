@@ -1,0 +1,70 @@
+---
+title: "Writing Page: Field Notes, Reports, and Technical Articles"
+sidebarTitle: "Writing"
+description: "The Writing page is a split-panel archive of technical articles, incident reports, and reflections, with a live preview pane that updates on hover."
+---
+
+The Writing page uses a two-column layout: the left panel lists all articles as selectable cards, each stamped with its type classification, while the right panel displays a live preview that updates whenever the user hovers or focuses a card. The preview pane shows the article title, publication date, read time, abstract, and a link to the full article view — all without a page navigation, keeping the browsing experience fast and terminal-like.
+
+## Routes
+
+The Writing section spans two routes:
+
+| Route | Shell | Description |
+|---|---|---|
+| `/#/writing` | `pages/Writing.html` | The split-panel archive list |
+| `/#/writing/:id` | `pages/ArticleView.html` | Full single-article view |
+
+## Article Entries
+
+All four articles currently in `data/articles.js`:
+
+| ID | Type | Title | Date | Read Time |
+|---|---|---|---|---|
+| `art-001` | `INCIDENT REPORT` | The Great State Collapse of 2023 | 2023-10-14 | 6 MIN |
+| `art-002` | `TECHNICAL` | Building Resilient Data Fetching Layers | 2024-02-02 | 8 MIN |
+| `art-003` | `REFLECTION` | Why I Stopped Using CSS Frameworks (And Why I Started Again) | 2024-05-18 | 5 MIN |
+| `art-004` | `FOR-GEN-AUDIENCE` | What Actually Happens When You Click "Buy" | 2024-08-30 | 10 MIN |
+
+## Article Data Shape
+
+Each entry in `data/articles.js` conforms to the following TypeScript-equivalent interface:
+
+```ts
+interface Article {
+  id: string;                  // e.g. "art-001"
+  type:
+    | 'INCIDENT REPORT'
+    | 'TECHNICAL'
+    | 'REFLECTION'
+    | 'FOR-GEN-AUDIENCE';
+  title: string;
+  date: string;                // ISO 8601, e.g. "2023-10-14"
+  readTime: string;            // e.g. "6 MIN"
+  abstract: string;            // One-paragraph summary shown in preview pane
+  content: string;             // Full long-form body rendered in ArticleView
+}
+```
+
+## Article View
+
+The full article view at `/#/writing/:id` renders the matched article with the following layout:
+
+1. **Display heading** — the article `title` in large tracked-out type with a `ClassificationStamp` for the `type`.
+2. **Abstract callout** — the `abstract` string inside a callout block bordered in lime/acid-green, visually separating it from the body prose.
+3. **Body prose** — the `content` field as long-form text. The first paragraph receives a CSS drop-cap on its initial letter, reinforcing the field-report document feel.
+
+<Warning>
+  If no article with the requested `:id` is found in `data/articles.js`, the `ArticleView` component should redirect to `/#/writing` rather than rendering a blank or broken state. This guard is not implemented by default — add it to the route resolver if needed.
+</Warning>
+
+## Components Used
+
+<CardGroup cols={2}>
+  <Card title="ClassificationStamp" icon="stamp" href="/components/classification-stamp">
+    Applied to each article card and the article view header to display the article `type`. The stamp variant is determined by type: `INCIDENT REPORT` renders in **magenta**; all other types (`TECHNICAL`, `REFLECTION`, `FOR-GEN-AUDIENCE`) render in **cyan**.
+  </Card>
+  <Card title="TabDivider" icon="minus" href="/components/tab-divider">
+    Used as a section header above the article list in the left panel of the archive view.
+  </Card>
+</CardGroup>

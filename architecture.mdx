@@ -1,0 +1,125 @@
+---
+title: "Architecture: How Developer Dossier Is Built and Routed"
+sidebarTitle: "Architecture"
+description: "Explains Developer Dossier's Vite build pipeline, React Router hash routing, static HTML route shells, data module pattern, and component structure."
+---
+
+Developer Dossier is a single compiled Vite bundle — `assets/main.js` — that mounts a React application into a `<div id="root">` element. Client-side navigation is handled by React Router configured with hash-based routing, meaning all route changes update the URL fragment (`#/`, `#/about`, `#/projects`, etc.) rather than the pathname. This is paired with a set of static HTML shell files, one per route, that set the initial hash and redirect the browser before React hydrates. The combination produces a fully deployable static site that supports direct URL access without any server-side routing logic.
+
+## Routing Model
+
+The application defines the following routes via React Router:
+
+| Path | Page |
+|---|---|
+| `/` | Home |
+| `/about` | About |
+| `/projects` | Projects |
+| `/skills` | Skills |
+| `/writing` | Writing (article list) |
+| `/writing/:id` | Article detail view |
+| `/case-studies/:id` | Case study detail view |
+| `/contact` | Contact |
+
+All routes are hash-prefixed at runtime (e.g., `#/about`, `#/writing/art-001`). Each route has a corresponding static `.html` file in the `pages/` directory. When a visitor lands on `pages/About.html` directly, the inline script sets `window.__STATIC_PAGE_ROUTE__` and conditionally redirects the hash before React loads:
+
+```html
+<script>
+  window.__STATIC_PAGE_ROUTE__ = "/about";
+  (function () {
+    if (!window.location.hash || window.location.hash === "#") {
+      window.location.replace(
+        window.location.pathname +
+        window.location.search +
+        "#/about"
+      );
+    }
+  })();
+</script>
+```
+
+The guard condition (`if (!window.location.hash || window.location.hash === "#")`) ensures the redirect only fires when no hash is already present, so navigating directly to a deep link like `pages/About.html#/about` does not trigger an unnecessary redirect loop.
+
+<Note>
+  Because routing is hash-based, no server-side rewrite rules are needed. The `index.html` shell at the root handles all entry points.
+</Note>
+
+## Build Pipeline
+
+Vite compiles the entire React and Tailwind source tree into a small set of static files:
+
+| Output file | Contents |
+|---|---|
+| `assets/main.js` | Bundled React application, all pages and components |
+| `assets/jsx-runtime.js` | React JSX runtime (split for modulepreload efficiency) |
+| `assets/proxy.js` | Framer Motion library (split chunk) |
+| `assets/main.css` | Compiled Tailwind CSS, including the Google Fonts `@import` |
+
+ES module preloading is declared in every HTML shell via `<link rel="modulepreload">` tags. This tells the browser to fetch and parse the JS modules in parallel before the main script executes, reducing the time-to-interactive on first load:
+
+```html
+<link rel="modulepreload" crossorigin href="./assets/jsx-runtime.js">
+<link rel="modulepreload" crossorigin href="./assets/proxy.js">
+<link rel="modulepreload" crossorigin href="./components/casefile/ClassificationStamp.js">
+<link rel="modulepreload" crossorigin href="./data/about.js">
+<link rel="modulepreload" crossorigin href="./data/projects.js">
+<link rel="modulepreload" crossorigin href="./data/skills.js">
+<link rel="modulepreload" crossorigin href="./data/articles.js">
+<link rel="modulepreload" crossorigin href="./data/caseStudies.js">
+```
+
+## Data Module Pattern
+
+Each content area is a standalone ES module that exports a named array. The modules live in `data/` and contain all user-editable portfolio content — no content is hardcoded in component files.
+
+```js
+import { p as projects } from './data/projects.js';
+import { s as skillCategories } from './data/skills.js';
+```
+
+The five data modules and their exports are:
+
+| Module | Export | Contents |
+|---|---|---|
+| `data/about.js` | `h` (history logs), `b` (behavioral traits) | Career timeline entries with classification levels; personality observation strings |
+| `data/projects.js` | `p` | Project records with title, codename, status, tech stack, descriptions, and links |
+| `data/skills.js` | `s` | Skill categories, each containing skills with a 1–5 proficiency rating |
+| `data/articles.js` | `a` | Article records with type, title, date, read time, and abstract |
+| `data/caseStudies.js` | `c` | Detailed case study records with ordered sections including incident logs |
+
+Because the modules are separate files and the bundler performs tree-shaking, any data that is not imported by a given page is excluded from that page's evaluated scope. To update portfolio content, edit the relevant data file — no component code needs to change.
+
+## Component Architecture
+
+Reusable UI components live in `components/casefile/`. Each file exports a single named component and imports only what it needs from the shared `assets/jsx-runtime.js` and `assets/proxy.js` chunks. There are no peer dependency requirements beyond what is already bundled.
+
+The four casefile components are:
+
+**`ClassificationStamp`** — Renders an inline bordered label in one of four color variants (`lime`, `magenta`, `violet`, `cyan`). Used to display security clearance levels (UNCLASSIFIED, RESTRICTED, CONFIDENTIAL, SECRET, TOP SECRET, ACTIVE) throughout the UI.
+
+**`LedMeter`** — Renders a row of rectangular LED-style segments to visualize a proficiency level (1–5). Each segment animates into view independently using Framer Motion's `whileInView` with a staggered delay, and lit segments glow with a lime-green box shadow.
+
+**`RedactedReveal`** — Wraps inline text in a Framer Motion animation that sweeps away a black redaction block as the element enters the viewport, revealing the underlying text with a trailing lime-colored wipe.
+
+**`TabDivider`** — Renders a section divider styled as a file-folder tab: a monospace label on a raised tab, with a dashed border extending across the full container width.
+
+## Static Deployment
+
+The Vite build produces a fully static output directory — HTML shells, JS chunks, and CSS — that can be served from any static hosting provider. Because all routing is handled client-side via the URL hash, no server-side rewrite or redirect rules are required.
+
+<CardGroup cols={2}>
+  <Card
+    title="Netlify"
+    icon="globe"
+    href="https://netlify.com"
+  >
+    Drop the build output into a Netlify site. No `_redirects` file is needed because hash routing never touches the server.
+  </Card>
+  <Card
+    title="GitHub Pages"
+    icon="github"
+    href="https://pages.github.com"
+  >
+    Push the build output to a `gh-pages` branch. The hash-based router works identically under the GitHub Pages CDN with no custom 404 handling required.
+  </Card>
+</CardGroup>

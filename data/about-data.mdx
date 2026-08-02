@@ -1,0 +1,109 @@
+---
+title: "About Data: Career History Logs and Behavioral Analysis"
+sidebarTitle: "About Data"
+description: "The about.js module exports historyLogs (career timeline entries with classification levels) and behaviorFlags (personality trait observations) for the About page."
+---
+
+The `data/about.js` module is the content layer for the About page. It exports two arrays: `historyLogs`, which drives the classified career timeline, and `behaviorFlags`, which populates the behavioral analysis section. Both arrays are consumed directly by the About page component — updating either array is all that's required to change what visitors see.
+
+## historyLogs Schema
+
+Each career milestone is modelled as a `HistoryLog` object. The `classification` field controls which `ClassificationStamp` variant is rendered alongside the entry, and the optional `isRedacted` flag enables the `RedactedReveal` animation on load.
+
+```ts
+interface HistoryLog {
+  id: string;           // e.g. "log-01"
+  date: string;         // e.g. "2016.08.14" or "PRESENT"
+  classification: 'UNCLASSIFIED' | 'RESTRICTED' | 'CONFIDENTIAL' | 'SECRET' | 'TOP SECRET' | 'ACTIVE';
+  text: string;         // Intelligence field report body
+  isRedacted?: boolean; // If true, applies RedactedReveal animation
+}
+```
+
+## Current History Log Entries
+
+The timeline currently contains six entries spanning from 2016 through the present day.
+
+| # | id | Date | Classification | Summary |
+|---|---|---|---|---|
+| 1 | `log-01` | 2016.08.14 | UNCLASSIFIED | Subject enrolled in nursing program — first documented institutional training. |
+| 2 | `log-02` | 2018.05.22 | RESTRICTED | Transitioned to retail merchandising — cross-functional operations experience logged. |
+| 3 | `log-03` | 2020.03.15 | CONFIDENTIAL *(redacted)* | Global incident forced isolation. Subject discovered HTML/CSS — initial field contact with web technologies. |
+| 4 | `log-04` | 2021.11.01 | SECRET | Subject acquired first official developer role — operational status confirmed. |
+| 5 | `log-05` | 2023.06.10 | TOP SECRET *(redacted)* | Promoted to lead frontend architecture — clearance level elevated accordingly. |
+| 6 | `log-06` | PRESENT | ACTIVE | Subject currently seeking new operational deployment — status open. |
+
+<Tip>
+  The `classification` level maps directly to a `ClassificationStamp` variant. Use `ACTIVE` → lime for current status, `TOP SECRET` → magenta for pivotal moments.
+</Tip>
+
+## behaviorFlags Schema
+
+`behaviorFlags` is a plain `string[]`. Each string is a first-person behavioral observation rendered as a list item inside the behavioral analysis panel on the About page. No additional structure is required.
+
+```ts
+type BehaviorFlags = string[];
+```
+
+## Current Behavior Flags
+
+The six flags currently documented in `data/about.js`:
+
+1. "Notices awkward wording and inconsistent branding immediately."
+2. "Physically unable to ignore off-center buttons or crooked alignment."
+3. "Deeply suspicious of generic layouts and fake corporate enthusiasm."
+4. "Prefers documentation that gets straight to the point."
+5. "Treats accessibility as a baseline requirement, not a feature."
+6. "Maintains an overly organized file structure."
+
+## Adding a New Log Entry
+
+<Steps>
+  <Step title="Open the data module">
+    Open `data/about.js` (or the pre-build source file if you're working from the raw source).
+  </Step>
+  <Step title="Append to historyLogs">
+    Add a new object to the `historyLogs` array following the `HistoryLog` schema. Assign a sequential `id` (e.g. `"log-07"`) and a `date` in `YYYY.MM.DD` format — or the string `"PRESENT"` for an ongoing entry.
+
+    ```js
+    {
+      id: "log-07",
+      date: "2025.01.15",
+      classification: "SECRET",
+      text: "Subject deployed new portfolio — operational effectiveness increased.",
+    }
+    ```
+  </Step>
+  <Step title="Choose a classification level">
+    Pick the `classification` value that best matches the significance of the entry. The level controls the color of the `ClassificationStamp` rendered next to the log.
+
+    | Classification | Stamp color | Recommended use |
+    |---|---|---|
+    | UNCLASSIFIED | slate | Early-career / education |
+    | RESTRICTED | yellow | Career transitions |
+    | CONFIDENTIAL | orange | Significant shifts |
+    | SECRET | red | First professional roles |
+    | TOP SECRET | magenta | Major milestones |
+    | ACTIVE | lime | Current / ongoing status |
+  </Step>
+  <Step title="Optionally enable the redacted reveal">
+    Set `isRedacted: true` on any entry you want to animate in with the `RedactedReveal` effect. This works best on pivotal entries that deserve dramatic emphasis.
+
+    ```js
+    {
+      id: "log-07",
+      date: "2025.01.15",
+      classification: "TOP SECRET",
+      text: "Subject deployed new portfolio — operational effectiveness increased.",
+      isRedacted: true,
+    }
+    ```
+  </Step>
+  <Step title="Rebuild the project">
+    Save your changes and run the build command to compile the updated data into the deployed site.
+
+    ```bash
+    npm run build
+    ```
+  </Step>
+</Steps>

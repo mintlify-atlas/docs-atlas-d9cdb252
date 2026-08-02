@@ -1,0 +1,81 @@
+---
+title: "LedMeter: Animated Proficiency Bar for Skills Visualization"
+sidebarTitle: "LedMeter"
+description: "LedMeter renders animated LED segments that light up on scroll, representing proficiency level from 1 to a configurable maximum. Powered by Framer Motion."
+---
+
+`LedMeter` renders a horizontal row of small rectangular segments — styled to resemble hardware LED indicators — that animate into view as the user scrolls. Each segment is independently driven by Framer Motion's `whileInView` hook. Lit segments glow neon lime (`#84FF00`) with a radial box shadow; unlit segments sit dark slate with a subdued violet border. The result is a skill proficiency indicator that feels like a diagnostic readout from a piece of classified field equipment rather than a standard progress bar.
+
+## Props
+
+<ParamField path="level" type="number" required>
+  The number of segments that should appear lit (active). Any segment with an index less than `level` is rendered in the lit state. Pass a value between `1` and `max`.
+</ParamField>
+
+<ParamField path="max" type="number" default="5">
+  The total number of segments to render. Defaults to `5`, producing a five-pip scale. Increase this for a finer-grained scale — for example, pass `max={10}` for a ten-point proficiency rating.
+</ParamField>
+
+## Animation
+
+Each segment is wrapped in a Framer Motion `motion.div` and staggers in as the component enters the viewport:
+
+- **Entry scale:** each segment scales from `0.8` → `1` and fades from `opacity: 0.2` → `1` (lit) or stays at `opacity: 0.2` (unlit).
+- **Stagger delay:** segments fire sequentially with a `0.1s` delay multiplied by the segment's index, so the bar fills left-to-right.
+- **Duration:** each segment's transition lasts `0.2s`.
+- **Once:** `viewport: { once: true }` ensures the animation fires exactly once the first time the component scrolls into view — it will not replay on scroll-back.
+
+## Visual States
+
+| State | Tailwind Classes | Effect |
+|---|---|---|
+| **Lit** | `bg-lime shadow-[0_0_8px_rgba(132,255,0,0.6)]` | Solid neon green fill with a soft lime glow |
+| **Unlit** | `bg-slate border border-violet/30` | Dark background with a muted violet outline |
+
+## Usage
+
+<CodeGroup>
+
+```jsx Default Five-Pip Scale
+import { LedMeter } from '../components/casefile/LedMeter';
+
+// TypeScript — full proficiency, 5 of 5 lit
+<LedMeter level={5} />
+
+// Python — strong proficiency, 4 of 5 lit
+<LedMeter level={4} />
+
+// Rust — still learning, 2 of 5 lit
+<LedMeter level={2} />
+```
+
+```jsx Custom Maximum Scale
+import { LedMeter } from '../components/casefile/LedMeter';
+
+// Ten-point scale — 7 of 10 lit
+<LedMeter level={7} max={10} />
+```
+
+```jsx Skills Table Pattern
+import { LedMeter } from '../components/casefile/LedMeter';
+
+// Pair with a label for a skills section row
+<div className="flex items-center justify-between">
+  <span className="font-mono text-xs text-violet uppercase tracking-widest">
+    TypeScript
+  </span>
+  <LedMeter level={5} />
+</div>
+<div className="flex items-center justify-between">
+  <span className="font-mono text-xs text-violet uppercase tracking-widest">
+    Rust
+  </span>
+  <LedMeter level={2} />
+</div>
+```
+
+</CodeGroup>
+
+<Tip>
+  Wrap `LedMeter` in a scrollable container to see the stagger animation trigger as each skill row scrolls into view. If your skills section is above the fold on page load, the animation fires immediately — consider adding a small `margin` offset to the `viewport` config if you need more control over the trigger point.
+</Tip>

@@ -1,0 +1,69 @@
+---
+title: "Projects Page: Active Operations and Archived Case Files"
+sidebarTitle: "Projects"
+description: "The Projects page shows portfolio projects as classified case files with codenames, status badges, tech stacks, and links to detailed case study deep-dives."
+---
+
+The Projects page presents each portfolio piece as a classified operational case file. Every project card displays a codename, an operational status badge (`SHIPPED`, `ACTIVE`, `HAUNTED`, or `DORMANT`), a list of tech-stack tags, and a set of action links that can point to a live demo, source repository, or a full case study writeup at `/case-studies/:id`. The dossier framing means even abandoned or legacy projects are never simply "old work" — they are filed as hauntings or dormant operations.
+
+## Route
+
+The Projects page is served at `/#/projects`. The static shell for direct linking is `data/projects.html`.
+
+## Project Entries
+
+| Title | Codename | Status | Tech Stack |
+|---|---|---|---|
+| Specter Analytics | `GHOST-TRACK` | `SHIPPED` | React, TypeScript, Recharts, Node.js |
+| Nexus Sync | `VOID-BRIDGE` | `ACTIVE` | Rust, WebSockets, Redis, React |
+| Legacy API Wrapper | `NECROMANCER` | `HAUNTED` | Python, FastAPI, SOAP, GraphQL |
+| Terminal Portfolio | `ECHO-DIR` | `DORMANT` | Vue, CSS Variables, Vite |
+
+### Status Definitions
+
+| Status | Meaning |
+|---|---|
+| `SHIPPED` | Project is live and actively maintained |
+| `ACTIVE` | Currently in development |
+| `HAUNTED` | Technically functional but carrying significant legacy debt |
+| `DORMANT` | Development paused; archived for reference |
+
+## Project Data Shape
+
+Each entry in `data/projects.js` conforms to the following TypeScript-equivalent interface:
+
+```ts
+interface Project {
+  id: string;
+  title: string;
+  codename: string;
+  status: 'SHIPPED' | 'ACTIVE' | 'HAUNTED' | 'DORMANT';
+  tech: string[];
+  description: string;       // Short card summary
+  fullDescription: string;   // Long-form case study body
+  links: {
+    demo?: string;
+    source?: string;
+    writeup?: string;        // Points to /case-studies/:id
+    readme?: string;
+  };
+  dataSource: 'LIVE' | 'SAMPLE' | 'MOCKED';
+}
+```
+
+The `dataSource` field indicates whether the project's metrics or visualisations are drawn from a real backend (`LIVE`), seeded sample data (`SAMPLE`), or entirely mocked (`MOCKED`). It is rendered as a secondary `ClassificationStamp` badge on each card, distinct from the operational `status` badge.
+
+## Components Used
+
+<CardGroup cols={2}>
+  <Card title="ClassificationStamp" icon="stamp" href="/components/classification-stamp">
+    Renders two badges per project card: one for the operational `status` and one for the `dataSource`. Each variant maps to a distinct color in the stamp palette.
+  </Card>
+  <Card title="TabDivider" icon="minus" href="/components/tab-divider">
+    Used as a styled section header above the project card grid.
+  </Card>
+</CardGroup>
+
+<Tip>
+  To link a project to its case study, set `links.writeup` to `/case-studies/:id` where `:id` matches the case study's `id` in `data/caseStudies.js`.
+</Tip>

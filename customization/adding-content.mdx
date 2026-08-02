@@ -1,0 +1,157 @@
+---
+title: "Adding Content: Projects, Articles, Skills, and Case Studies"
+sidebarTitle: "Adding Content"
+description: "Step-by-step guide to adding new projects, writing articles, updating skills, and creating case study deep-dives in Developer Dossier's data modules."
+---
+
+All content in Developer Dossier lives in five files inside the `data/` directory. There is no CMS, no database, and no external API — your portfolio is entirely driven by plain JavaScript data modules. Updating your work means editing these files directly, then running `npm run build` to produce a fresh set of static files ready to deploy.
+
+## Adding a Project
+
+Projects are displayed on the `/projects` route and can link through to full case study deep-dives.
+
+<Steps>
+  <Step title="Open the projects data file">
+    Open `data/projects.js` in your editor.
+  </Step>
+  <Step title="Append a new object to the array">
+    Add a new entry object to the exported `projects` array.
+  </Step>
+  <Step title="Fill in all required fields">
+    Every project entry requires: `id`, `title`, `codename`, `status`, `tech`, `description`, `fullDescription`, `links`, and `dataSource`.
+  </Step>
+  <Step title="Set a unique ID">
+    The `id` field (e.g. `prj-005`) is used as a React key and for internal cross-references. It is **not** used as a URL segment, so format is flexible — but keep it sequential and consistent.
+  </Step>
+  <Step title="Rebuild">
+    Run `npm run build` to bundle the updated data into the static output.
+  </Step>
+</Steps>
+
+```js
+{
+  id: "prj-005",
+  title: "Signal Relay",
+  codename: "PHANTOM-WIRE",
+  status: "ACTIVE",
+  tech: ["TypeScript", "Next.js", "Prisma", "PostgreSQL"],
+  description: "A self-hosted webhook relay with retry logic and delivery receipts.",
+  fullDescription: "Signal Relay intercepts incoming webhooks and fans them out to multiple downstream consumers with configurable retry strategies and signed delivery receipts. Built with a Next.js API layer and a Prisma-backed event log.",
+  links: {
+    source: "https://github.com/your-handle/signal-relay",
+    writeup: "/case-studies/signal-relay"
+  },
+  dataSource: "LIVE"
+}
+```
+
+## Adding a Writing Article
+
+Articles appear on the `/writing` route as a list of previews, and each entry is accessible at `/#/writing/:id`.
+
+<Steps>
+  <Step title="Open the articles data file">
+    Open `data/articles.js` in your editor.
+  </Step>
+  <Step title="Append a new object to the array">
+    Add a new entry to the exported `articles` array.
+  </Step>
+  <Step title="Choose a type">
+    Set the `type` field to one of the supported values: `'INCIDENT REPORT'`, `'TECHNICAL'`, `'REFLECTION'`, or `'FOR-GEN-AUDIENCE'`. The type is displayed as a label badge in the list view.
+  </Step>
+  <Step title="Set a unique ID that becomes the URL slug">
+    The `id` is used directly in the route: an article with `id: "art-005"` is accessible at `/#/writing/art-005`.
+  </Step>
+  <Step title="Write an abstract and full content">
+    The `abstract` field is shown as the preview blurb in the article list. The `content` field holds the full article body displayed on the article page.
+  </Step>
+  <Step title="Rebuild">
+    Run `npm run build`.
+  </Step>
+</Steps>
+
+```js
+{
+  id: "art-005",
+  type: "TECHNICAL",
+  title: "Why I Reach for Zustand Before Redux",
+  date: "2025-01-15",
+  readTime: "7 MIN",
+  abstract: "A pragmatic look at when Zustand's minimal API is the right choice and when you actually need Redux's ecosystem.",
+  content: "Full article content goes here..."
+}
+```
+
+## Updating Skills
+
+Skills are organized into named categories in `data/skills.js`. Each skill has a `name` and a `proficiency` rating on a scale of **1–5**.
+
+To add a skill to an existing category, locate the matching category object and append to its `skills` array:
+
+```js
+// Adding a skill to an existing category
+{
+  category: "Frontend",
+  skills: [
+    { name: "React", proficiency: 5 },
+    { name: "Vue", proficiency: 3 },
+    { name: "Svelte", proficiency: 4 }  // ← new entry
+  ]
+}
+```
+
+To add an entirely new category, append a new category object to the top-level array:
+
+```js
+// Adding a new category
+{
+  category: "DevOps",
+  skills: [
+    { name: "Docker", proficiency: 4 },
+    { name: "Kubernetes", proficiency: 3 },
+    { name: "Terraform", proficiency: 3 }
+  ]
+}
+```
+
+## Adding a Case Study
+
+Case studies are full deep-dive pages accessible at `/#/case-studies/:id`. Each one must be linked from its corresponding project entry.
+
+<Steps>
+  <Step title="Add a new entry to the case studies data file">
+    Open `data/caseStudies.js` and add a new object with a unique `id` to the exported array.
+  </Step>
+  <Step title="Link the case study from its project">
+    In `data/projects.js`, set the `links.writeup` field on the matching project to `/case-studies/<your-id>`. The `id` in `caseStudies.js` must exactly match the final path segment.
+  </Step>
+  <Step title="Structure your sections">
+    Populate the `sections` array using the standard schema — each section has a `title` and `body` for prose content. Add `type: 'log'` sections to render an entry in a terminal-log style rather than standard prose.
+  </Step>
+  <Step title="Rebuild">
+    Run `npm run build`.
+  </Step>
+</Steps>
+
+The `id` in `caseStudies.js` and the `writeup` path in `projects.js` must stay in sync:
+
+```js
+// In data/caseStudies.js
+{ id: "signal-relay", title: "CASE FILE: Signal Relay", sections: [...] }
+
+// In data/projects.js
+{ id: "prj-005", ..., links: { writeup: "/case-studies/signal-relay" } }
+```
+
+## Updating the About Page
+
+The About page is driven by two arrays in `data/about.js`:
+
+- **`historyLogs`** — a chronological timeline of career events, education, and milestones. Each entry includes a date, a title, a description, and an optional `isRedacted` flag.
+- **`behaviorFlags`** — a set of short, punchy trait descriptors displayed as classification tags.
+
+Edit these arrays directly to personalize the About page narrative.
+
+<Tip>
+Set `isRedacted: true` on a history log entry to apply the `RedactedReveal` animation to particularly dramatic moments in your timeline.
+</Tip>

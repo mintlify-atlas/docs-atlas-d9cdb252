@@ -1,0 +1,73 @@
+---
+title: "ClassificationStamp: Security Clearance Level Badge Component"
+sidebarTitle: "ClassificationStamp"
+description: "ClassificationStamp renders an inline badge styled as a classified document stamp in one of four color variants: lime, magenta, violet, or cyan."
+---
+
+`ClassificationStamp` renders a compact inline badge that mimics the look of a rubber-stamped security classification mark — uppercase monospace text inside a thin colored border with a matching tinted background. It appears throughout the app wherever status or category context is needed at a glance: project cards carry data-source labels, writing article headers display article-type stamps, case study sections use it for methodology tags, and the About page history logs apply it to clearance-level and employment-status indicators.
+
+## Props
+
+<ParamField path="text" type="string" required>
+  The stamp label text. Rendered in monospace and forced to uppercase via Tailwind's `uppercase` and `tracking-widest` utility classes — no manual uppercasing needed at the call site.
+</ParamField>
+
+<ParamField path="variant" type="'lime' | 'magenta' | 'violet' | 'cyan'" default="lime">
+  Controls the color theme applied to the text, border, and background of the stamp. Each variant maps to a single brand color defined in the project's Tailwind config.
+</ParamField>
+
+<ParamField path="className" type="string" default="">
+  Additional Tailwind utility classes passed directly to the wrapper `div`. Use this to adjust spacing, override layout, or layer the stamp inside a flex or grid container.
+</ParamField>
+
+## Variant Color Reference
+
+Each variant corresponds to a named color in the project's Tailwind palette. The badge applies that color to text, border, and a low-opacity background fill (`/10` alpha).
+
+| Variant | Color Name | Hex | Applied To |
+|---|---|---|---|
+| `lime` | Neon Green | `#84FF00` | Text, border, `bg-lime/10` fill |
+| `magenta` | Hot Pink | `#FF2BD6` | Text, border, `bg-magenta/10` fill |
+| `violet` | Purple | `#a855f7` | Text, border, `bg-violet/10` fill |
+| `cyan` | Electric Cyan | `#00F5FF` | Text, border, `bg-cyan/10` fill |
+
+## Usage
+
+<CodeGroup>
+
+```jsx Classification Levels (About Page)
+import { ClassificationStamp } from '../components/casefile/ClassificationStamp';
+
+// Ascending clearance levels
+<ClassificationStamp text="UNCLASSIFIED" variant="lime" />
+<ClassificationStamp text="RESTRICTED" variant="violet" />
+<ClassificationStamp text="CONFIDENTIAL" variant="cyan" />
+<ClassificationStamp text="SECRET" variant="magenta" />
+<ClassificationStamp text="TOP SECRET" variant="magenta" />
+
+// Employment status indicator
+<ClassificationStamp text="ACTIVE" variant="lime" />
+```
+
+```jsx Article Type Labels (Writing Page)
+import { ClassificationStamp } from '../components/casefile/ClassificationStamp';
+
+// Article category stamps rendered in post headers
+<ClassificationStamp text="INCIDENT REPORT" variant="magenta" />
+<ClassificationStamp text="TECHNICAL" variant="cyan" />
+```
+
+```jsx Project Data Source Labels (Project Cards)
+import { ClassificationStamp } from '../components/casefile/ClassificationStamp';
+
+// Indicates the origin of project data shown on the card
+<ClassificationStamp text="LIVE" variant="lime" />
+<ClassificationStamp text="SAMPLE" variant="violet" />
+<ClassificationStamp text="MOCKED" variant="cyan" />
+```
+
+</CodeGroup>
+
+<Note>
+  Text is automatically uppercased by the component's Tailwind classes (`tracking-widest uppercase`). You can pass mixed-case or lowercase strings to `text` and they will always render as uppercase — no need to shout-case your strings at the call site.
+</Note>

@@ -1,0 +1,140 @@
+---
+title: "Skills Data: Proficiency Ratings Across Technical Categories"
+sidebarTitle: "Skills Data"
+description: "The skills.js module exports skillCategories — an array of skill groups each containing named skills with proficiency ratings from 1 to 5 for the Skills page."
+---
+
+The `data/skills.js` module exports `skillCategories`, an array of category objects that drive the Skills page. Each category groups related skills, and every skill carries a numeric proficiency rating from 1 to 5 that is rendered as an animated `LedMeter` component — a row of illuminated segments that fills proportionally to the skill level. No component code needs to change to add, remove, or re-rate a skill.
+
+## SkillCategory Schema
+
+```ts
+interface SkillCategory {
+  category: string; // Display name, typically ALL CAPS
+  skills: Array<{
+    name: string;
+    proficiency: 1 | 2 | 3 | 4 | 5;
+  }>;
+}
+```
+
+## Proficiency Scale
+
+The `proficiency` integer maps directly to the number of lit segments in the `LedMeter`. The visual is `■` for a lit segment and `□` for an unlit segment across a five-segment bar.
+
+| Level | LedMeter | Meaning |
+|---|---|---|
+| 1 | ■□□□□ | Beginner / actively learning |
+| 2 | ■■□□□ | Familiar — used on projects but not daily |
+| 3 | ■■■□□ | Proficient — comfortable and independent |
+| 4 | ■■■■□ | Advanced — deep knowledge, handles edge cases |
+| 5 | ■■■■■ | Expert / daily driver — go-to tool |
+
+## Current Skill Categories
+
+The module currently defines six categories. Skills are listed with their proficiency level in parentheses.
+
+### LANGUAGES
+
+| Skill | Proficiency |
+|---|---|
+| JavaScript | 5 |
+| TypeScript | 4 |
+| HTML5 | 5 |
+| CSS3 | 5 |
+| Python | 3 |
+| Rust | 2 |
+
+### WEB INTERFACES
+
+| Skill | Proficiency |
+|---|---|
+| React | 5 |
+| Vue | 3 |
+| Vite | 4 |
+| Tailwind CSS | 4 |
+| CSS Variables | 5 |
+| Responsive Design | 5 |
+
+### SERVER & DATA
+
+| Skill | Proficiency |
+|---|---|
+| Node.js | 4 |
+| FastAPI | 3 |
+| REST APIs | 4 |
+| GraphQL | 3 |
+| WebSockets | 4 |
+| Redis | 2 |
+
+### TOOLING & VERSIONING
+
+| Skill | Proficiency |
+|---|---|
+| Git | 5 |
+| GitHub Actions | 3 |
+| Docker | 2 |
+| Vite | 4 |
+| Vitest | 3 |
+| ESLint / Prettier | 5 |
+
+### INVESTIGATIVE
+
+| Skill | Proficiency |
+|---|---|
+| Browser DevTools | 5 |
+| Performance Profiling | 4 |
+| Accessibility Auditing | 4 |
+| Error Tracing | 4 |
+| WCAG Compliance | 3 |
+
+### COMMUNICATIONS
+
+| Skill | Proficiency |
+|---|---|
+| Technical Writing | 4 |
+| Code Review | 4 |
+| Documentation | 5 |
+| Stakeholder Briefing | 3 |
+
+## Adding a Skill
+
+<Steps>
+  <Step title="Open the data module">
+    Open `data/skills.js` in your editor.
+  </Step>
+  <Step title="Find the appropriate category">
+    Locate the category object whose `category` string best matches the skill you're adding. For example, a new framework belongs in `"WEB INTERFACES"`, while a new CLI tool belongs in `"TOOLING & VERSIONING"`.
+
+    ```js
+    {
+      category: "WEB INTERFACES",
+      skills: [
+        { name: "React", proficiency: 5 },
+        // add your new skill here
+      ],
+    }
+    ```
+  </Step>
+  <Step title="Add the new skill entry">
+    Append a `{ name, proficiency }` object to the `skills` array of the chosen category.
+
+    ```js
+    { name: "Solid.js", proficiency: 2 }
+    ```
+  </Step>
+  <Step title="Set the proficiency rating">
+    Assign a `proficiency` integer from `1` (beginner) to `5` (expert). Be honest — the `LedMeter` is a direct visual representation of your self-assessed capability, and visitors will notice if the ratings feel inflated.
+  </Step>
+  <Step title="Rebuild the project">
+    Save your changes and run the build command to compile the updated skills data into the deployed site.
+
+    ```bash
+    npm run build
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+  To add an entirely new category, append a new object to the top-level `skillCategories` array with a `category` name and an initial `skills` array. The Skills page renders all categories dynamically — no layout changes are needed.
+</Tip>

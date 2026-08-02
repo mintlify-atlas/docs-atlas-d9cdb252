@@ -1,0 +1,63 @@
+---
+title: "About Page: Career Timeline and Behavioral Analysis"
+sidebarTitle: "About"
+description: "The About page shows a career history formatted as classified intelligence logs with clearance levels, and a behavioral analysis of personality traits."
+---
+
+The About page presents the developer's career journey as a series of dated intelligence field reports, each stamped with a security classification level that escalates as the career progresses — from `UNCLASSIFIED` to `ACTIVE`. Two entries (logs 03 and 05) are marked `isRedacted: true` and use the `RedactedReveal` animation, which renders the log body as a blacked-out redaction bar that lifts on hover or focus to expose the underlying text. The page closes with a **Behavioral Analysis** section that lists six personality observations styled as terse intelligence field notes.
+
+## Route
+
+The About page is served at `/#/about`. The static shell for pre-render or direct linking is `data/about.html`.
+
+## History Log Format
+
+Each entry in the `historyLogs` array describes a career milestone as a filed intelligence report.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Unique log identifier — e.g. `"log-01"` |
+| `date` | `string` | ISO-style log date or `"PRESENT"` for the active entry |
+| `classification` | `string` | Security clearance level label applied as a stamp |
+| `text` | `string` | Full log body text rendered as field report prose |
+| `isRedacted` | `boolean?` | When `true`, wraps the text in a `RedactedReveal` animation |
+
+### Log Entries
+
+All six history logs in chronological order:
+
+- **log-01** · `2016.08.14` · `UNCLASSIFIED` — Enrollment in nursing program; first documented exposure to structured analytical thinking.
+- **log-02** · `2018.05.22` · `RESTRICTED` — Retail merchandising role; subject independently authored spreadsheet macros to automate reporting workflows.
+- **log-03** · `2020.03.15` · `CONFIDENTIAL` *(redacted)* — Discovery of HTML and CSS during a period of global isolation; initial self-directed technical training begins.
+- **log-04** · `2021.11.01` · `SECRET` — First formal developer role secured; subject refactored legacy authentication system.
+- **log-05** · `2023.06.10` · `TOP SECRET` *(redacted)* — Assumed lead frontend architecture responsibilities; deep immersion in the React ecosystem.
+- **log-06** · `PRESENT` · `ACTIVE` — Operational status: seeking new deployment.
+
+<Tip>
+  Logs with `isRedacted: true` (log-03 and log-05) render their `text` field inside a `RedactedReveal` component. The redaction lifts on pointer hover or keyboard focus, revealing the content with a CSS transition.
+</Tip>
+
+## Behavioral Analysis
+
+The `behaviorFlags` array contains six personality observations rendered as a bulleted list, styled as terse intelligence field notes in the UI.
+
+1. Notices awkward wording and inconsistent branding immediately.
+2. Physically unable to ignore off-center buttons or crooked alignment.
+3. Will refactor a function "just to understand it" and emerge three hours later with a new abstraction layer.
+4. Defaults to over-documentation when uncertain; README files trend long.
+5. Treats accessibility as a constraint to design *with*, not around.
+6. Compulsively checks contrast ratios before shipping any new color.
+
+## Components Used
+
+<CardGroup cols={3}>
+  <Card title="ClassificationStamp" icon="stamp" href="/components/classification-stamp">
+    Renders the clearance level badge on each log entry and on the page header. Accepts the `classification` string from the log data as its variant prop.
+  </Card>
+  <Card title="RedactedReveal" icon="eye-slash" href="/components/redacted-reveal">
+    Wraps the `text` of any log where `isRedacted: true`. Displays a redaction bar that transitions to readable text on hover or focus.
+  </Card>
+  <Card title="TabDivider" icon="minus" href="/components/tab-divider">
+    Used as a styled section header between the History Log timeline and the Behavioral Analysis section.
+  </Card>
+</CardGroup>

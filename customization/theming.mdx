@@ -1,0 +1,112 @@
+---
+title: "Theming: Color Palette, Typography, and CSS Utility Classes"
+sidebarTitle: "Theming"
+description: "A reference for Developer Dossier's full color palette, three-font typography system, and custom Tailwind utility classes like glass-panel and ambient-glow."
+---
+
+Developer Dossier is built on a dark cyberpunk design system powered by Tailwind CSS. The palette is organized around two background levels — **ink** (the deepest near-black) and **slate** (a slightly lighter panel surface) — plus five named accent colors: **lime**, **violet**, **magenta**, **cyan**, and **tinted**. Every component in the codebase applies these colors exclusively through Tailwind utility classes, ensuring visual consistency and making global changes a single-line edit.
+
+## Color Palette
+
+Each color is registered as a custom Tailwind token and available as a `text-*`, `bg-*`, or `border-*` utility depending on context.
+
+| Color | Tailwind Class | Hex | Used For |
+|---|---|---|---|
+| Ink | `bg-ink` / `text-ink` | `#050507` | Page background |
+| Slate | `bg-slate` | `#0F0F17` | Panel/card backgrounds |
+| Tinted | `text-tinted` | `#E9E4FF` | Body text (off-white with violet tint) |
+| Lime | `text-lime` / `bg-lime` | `#84FF00` | Primary accent, CTAs, active states |
+| Violet | `text-violet` / `border-violet` | `#A855F7` | Labels, borders, secondary UI |
+| Magenta | `text-magenta` / `bg-magenta` | `#FF2BD6` | Alerts, CRITICAL severity, hot accents |
+| Cyan | `text-cyan` / `border-cyan` | `#00F5FF` | Links, info badges, hover states |
+
+<Note>
+Opacity modifiers work on all colors using the `/` syntax: `text-lime/60` renders lime at 60% opacity. This is used extensively throughout the codebase for muted states and hover effects.
+</Note>
+
+## Typography
+
+Developer Dossier uses a three-font system, with each typeface assigned a distinct role in the UI. All three fonts are loaded from Google Fonts and mapped to custom Tailwind `font-*` utilities.
+
+| Role | Font | Tailwind Class | Weights |
+|---|---|---|---|
+| Display/Headings | IBM Plex Sans Condensed | `font-display` | 400, 500, 600, 700 |
+| Body/Prose | Inter | `font-prose` | 400, 500, 600 |
+| Labels/Code/UI | JetBrains Mono | `font-mono` | 400, 500, 700 |
+
+Use the appropriate class to stay consistent with the dossier aesthetic — display headings feel commanding and condensed, prose stays legible, and mono labels give the UI its classified-document character.
+
+```html
+<!-- Heading -->
+<h1 class="font-display text-4xl font-bold text-tinted tracking-tight">CASE FILE</h1>
+
+<!-- Body text -->
+<p class="font-prose text-tinted/80 leading-relaxed">Field report body text.</p>
+
+<!-- Monospace label -->
+<span class="font-mono text-xs text-violet tracking-widest uppercase">CLASSIFICATION</span>
+```
+
+## Custom CSS Utility Classes
+
+Several compound styles are defined as named utility classes in `assets/main.css`. Use these directly in your JSX/HTML rather than re-implementing the underlying CSS.
+
+### `.glass-panel`
+
+A frosted glass card effect intended for floating panels, modals, and info cards. Applies a translucent slate background, a violet-tinted border, a drop shadow, and backdrop blur.
+
+```
+border border-violet/30 bg-slate/80 shadow backdrop-blur-md
+```
+
+### `.bg-classified-pattern`
+
+A fixed full-viewport radial dot grid that reinforces the classified-document aesthetic. The dots are rendered as a `radial-gradient` repeating at a 24×24 px interval in a muted violet.
+
+```
+background: radial-gradient(circle, rgba(168,85,247,.15) 1px, transparent 1px)
+background-size: 24px 24px
+background-attachment: fixed
+```
+
+### `.ambient-glow`
+
+A large, extremely subtle radial gradient centered on the viewport that gives the background a faint purple luminescence. Layered beneath content to add depth without distraction.
+
+```
+background: radial-gradient(circle at center, rgba(124,58,237,.03) 0%, transparent 70%)
+background-attachment: fixed
+```
+
+### `.custom-scrollbar`
+
+Styles the browser scrollbar to match the dark theme — a 6px-wide track with a violet/30 thumb, replacing the default system scrollbar appearance.
+
+```
+scrollbar-width: 6px
+scrollbar-color: rgba(168,85,247,.3) transparent
+```
+
+### `.animate-flicker`
+
+A 3-second opacity flicker animation that simulates unstable neon signage. Apply sparingly to headings or accent elements to add personality without overwhelming the page.
+
+```
+animation: flicker 3s infinite
+```
+
+### `.animate-pulse-slow`
+
+A gentle 4-second pulse cycle, slower than Tailwind's built-in `animate-pulse`. Designed for status indicators (e.g. "ACTIVE" badges) where a rapid pulse would feel alarming.
+
+```
+animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite
+```
+
+## Modifying Colors
+
+All color tokens are defined as custom colors in the Tailwind configuration. To change a color globally, update the corresponding entry in your Tailwind config and, if the color is also referenced in a raw CSS value (such as inside a `radial-gradient`), update the matching `rgba()` value in `assets/main.css`.
+
+<Tip>
+To change the primary accent from lime to another color, update the `lime` entry in the Tailwind config and the associated CSS variable references in `main.css`.
+</Tip>

@@ -1,0 +1,49 @@
+---
+title: "TabDivider: Section Header Divider with Dossier Tab Aesthetic"
+sidebarTitle: "TabDivider"
+description: "TabDivider renders a section label styled as a physical file folder tab, with a dashed line extending to the right edge — separating case study sections."
+---
+
+`TabDivider` renders a full-width flex row composed of two parts: a compact monospace label on the left styled to look like a physical manila folder tab — with a top, left, and right border, rounded top corners, and a slate background — and a dashed line that extends to fill the remaining horizontal space. Together they form a visual divider that evokes a tabbed case file, separating named sections within a case study or long-form content page. The label text is automatically uppercased and letter-spaced for the classified-document aesthetic.
+
+## Props
+
+<ParamField path="label" type="string" required>
+  The section name displayed inside the tab. Rendered in monospace, uppercase, and wide letter-spacing via `font-mono text-xs text-violet tracking-widest uppercase`. Short, numbered labels like `"01. THE BRIEF"` work best.
+</ParamField>
+
+<ParamField path="className" type="string" default="">
+  Additional Tailwind utility classes applied to the outer flex wrapper `div`. Use this to add top/bottom margin, adjust alignment, or override the default full-width layout.
+</ParamField>
+
+## Styling Reference
+
+| Element | Tailwind Classes | Effect |
+|---|---|---|
+| **Tab label** | `bg-slate border-t border-l border-r border-violet/30 px-4 py-1 rounded-t-md font-mono text-xs text-violet tracking-widest uppercase` | Folder-tab appearance with open bottom edge |
+| **Dashed line** | `flex-grow border-b border-dashed border-violet/30 relative -top-[1px]` | Extends to fill remaining width, aligned to the tab's bottom border |
+
+The `-top-[1px]` offset on the dashed line nudges it up by one pixel so its bottom border aligns flush with the bottom edge of the tab, creating the illusion that the tab is sitting on top of the line — just like a real folder tab.
+
+## Usage
+
+```jsx Case Study Sections
+import { TabDivider } from '../components/casefile/TabDivider';
+
+// Numbered section dividers on a case study page
+<TabDivider label="01. THE BRIEF" />
+<TabDivider label="02. OBJECTIVE" />
+<TabDivider label="03. METHODOLOGY" />
+<TabDivider label="04. DESIGN DECISIONS" />
+```
+
+```jsx With Custom Spacing
+import { TabDivider } from '../components/casefile/TabDivider';
+
+// Add vertical margin via className to breathe between sections
+<TabDivider label="05. OUTCOMES" className="mt-12 mb-6" />
+```
+
+<Tip>
+  Pair `TabDivider` with a `scroll-mt-24` class on the section container directly below it to make section jumps from a sticky sidebar navigation land cleanly below the app header — otherwise the header will overlap the tab when the browser scrolls to the anchor.
+</Tip>

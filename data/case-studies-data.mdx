@@ -1,0 +1,159 @@
+---
+title: "Case Studies Data: Deep-Dive Project Dossiers"
+sidebarTitle: "Case Studies Data"
+description: "The caseStudies.js module exports detailed case study dossiers with section-by-section breakdowns, incident logs, and outcome summaries for the CaseStudyView page."
+---
+
+The `data/caseStudies.js` module exports the `caseStudies` array — a collection of multi-section deep-dive dossiers that give projects a detailed narrative beyond the one-line description on the Projects page. Each case study is accessed at `/#/case-studies/:id` and rendered by the `CaseStudyView` component, which generates a sticky sidebar navigation from the section list and renders each section's content in the main scroll area. The portfolio currently includes one case study: **Specter Analytics**.
+
+## Case Study Schema
+
+```ts
+interface CaseStudy {
+  id: string;    // URL segment, e.g. "specter" → /#/case-studies/specter
+  title: string; // Display title, e.g. "CASE FILE: Specter Analytics"
+  sections: Array<{
+    id: string;        // e.g. "01" — used for sidebar nav and anchor links
+    title: string;     // Section title displayed in the sidebar nav
+    content: string;   // Prose content for standard sections
+    type?: 'log';      // If 'log', renders as an incident log timeline instead of prose
+    logs?: Array<{
+      date: string;    // e.g. "Day 14"
+      severity: 'LOW' | 'MEDIUM' | 'CRITICAL';
+      text: string;    // Description of the incident
+    }>;
+  }>;
+}
+```
+
+## Section Types
+
+Sections come in two display variants, controlled by the optional `type` field.
+
+**Standard section** (no `type` field) — The `content` string is rendered as a prose paragraph inside the main content area. Used for narrative, analytical, and descriptive sections.
+
+**Log section** (`type: 'log'`) — The `logs` array is rendered as an incident log timeline. Each entry displays its `date`, a severity badge, and the incident `text`. The `content` field is ignored when `type` is `'log'`. Severity badge colors follow the classification palette:
+
+| Severity | Badge Color |
+|---|---|
+| `LOW` | lime |
+| `MEDIUM` | cyan |
+| `CRITICAL` | magenta |
+
+## Specter Analytics Case Study
+
+The Specter Analytics case study (`id: "specter"`, title: `"CASE FILE: Specter Analytics"`) is organized into nine sections.
+
+### 01 — THE BRIEF
+
+A client needed an internal analytics dashboard that captured user behavior without relying on third-party tracking services. All data had to remain on-premises, and the interface needed to be fast enough for daily use by non-technical stakeholders.
+
+### 02 — OBJECTIVE
+
+Build a performant, accessible React frontend capable of visualizing large volumes of event data in real time. The dashboard needed to load quickly, remain responsive under heavy query loads, and pass WCAG AA accessibility standards.
+
+### 03 — METHODOLOGY
+
+Backend aggregation was handled server-side to reduce the data volume sent to the client. Expensive computations were offloaded to Web Workers to keep the main thread free. Recharts was selected for the visualization layer due to its composable, React-native API.
+
+### 04 — DESIGN DECISIONS
+
+A dark, high-contrast UI was chosen to reduce eye strain during extended operational use. A monochromatic palette with accent lime kept the visual language consistent with the classified dossier aesthetic while ensuring chart data remained legible at a glance.
+
+### 05 — DEVELOPMENT DECISIONS
+
+Vite was used as the build tool for its near-instant HMR. Lists displaying thousands of event rows were virtualized to maintain 60fps scrolling. Zustand was adopted for global state management — lightweight enough to avoid Redux overhead, structured enough to prevent prop-drilling.
+
+### 06 — INCIDENT LOG
+
+Three incidents were logged during the development of Specter Analytics.
+
+| Day | Severity | Incident |
+|---|---|---|
+| Day 14 | MEDIUM | Recharts tooltip causing layout thrashing on hover. Resolved by memoizing the custom tooltip component. |
+| Day 22 | CRITICAL | Memory leak in WebSocket connection — event listeners were not being removed on component unmount. Patched by returning a cleanup function from `useEffect`. |
+| Day 35 | LOW | Color contrast on secondary chart axes failed WCAG AA audit. Adjusted slate color values to meet the 4.5:1 contrast ratio requirement. |
+
+### 07 — OUTCOME
+
+The project shipped two weeks ahead of schedule. Dashboard query response time improved from 4.2 seconds to 0.8 seconds after the Web Worker migration. Daily active usage among internal stakeholders increased by 40% within the first month of deployment.
+
+### 08 — SKILLS DEMONSTRATED
+
+Advanced React patterns (memoization, custom hooks, render optimization), Performance Profiling (DevTools flame graphs, memory snapshots), Data Visualization (Recharts composition, custom tooltips), WebSocket lifecycle management.
+
+### 09 — FUTURE OPERATIONS
+
+Planned next steps include migrating heavy chart renders to WebGL for GPU-accelerated performance, and introducing WebAssembly-based client-side filtering to reduce the server query load for common dashboard views.
+
+## The Case Study View Layout
+
+The `CaseStudyView` component renders a two-column layout. The left column contains a sticky sidebar that lists all section titles as anchor links — clicking a link scrolls the main content to the corresponding section. Each section heading uses `scroll-mt-24` to account for the fixed navigation bar at the top of the page, ensuring the heading is not obscured on scroll-jump.
+
+Section transitions are separated by `TabDivider` components, which maintain the visual language of the rest of the portfolio. The sidebar remains fixed in the viewport while the right column scrolls freely, allowing visitors to orient themselves within long dossiers without losing their place.
+
+## Adding a Case Study
+
+<Steps>
+  <Step title="Add a project entry first">
+    Before creating the case study, ensure the corresponding project exists in `data/projects.js` with a `links.writeup` value that matches the `id` you plan to use.
+
+    ```js
+    // In data/projects.js
+    links: {
+      writeup: "/case-studies/nexus", // the id you will use below
+    }
+    ```
+  </Step>
+  <Step title="Open the case studies module">
+    Open `data/caseStudies.js` and locate the `caseStudies` array.
+  </Step>
+  <Step title="Append a new case study object">
+    Add a new entry to the array. Give it an `id` that exactly matches the path segment used in `links.writeup`.
+
+    ```js
+    {
+      id: "nexus",
+      title: "CASE FILE: Nexus Sync",
+      sections: [],
+    }
+    ```
+  </Step>
+  <Step title="Build out the sections array">
+    Add section objects to the `sections` array. Start with a narrative arc — brief, objective, methodology, decisions, outcome — then add a log section if you have incidents worth documenting.
+
+    ```js
+    sections: [
+      {
+        id: "01",
+        title: "THE BRIEF",
+        content: "Description of the client need or project origin...",
+      },
+      {
+        id: "06",
+        title: "INCIDENT LOG",
+        type: "log",
+        content: "",
+        logs: [
+          {
+            date: "Day 7",
+            severity: "CRITICAL",
+            text: "Race condition in the sync protocol caused duplicate state emissions.",
+          },
+        ],
+      },
+    ]
+    ```
+  </Step>
+  <Step title="Rebuild the project">
+    Save your changes and run the build. The new case study will be accessible at `/#/case-studies/nexus` and the **View Case File** button will appear on the Nexus Sync project card.
+
+    ```bash
+    npm run build
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  The `id` in `caseStudies.js` must exactly match the path segment set in `links.writeup` in `projects.js`. A mismatch will cause the case study route to return a 404 and the project card button to link to a dead page.
+</Warning>

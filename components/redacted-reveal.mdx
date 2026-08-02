@@ -1,0 +1,47 @@
+---
+title: "RedactedReveal: Animated Text Unredaction Effect on Scroll"
+sidebarTitle: "RedactedReveal"
+description: "RedactedReveal wraps inline text in a Framer Motion animation that mimics a classified document unredaction effect as the element scrolls into view."
+---
+
+`RedactedReveal` wraps any inline text children and applies a two-layer Framer Motion animation that looks like a classified document having its redaction bar removed. On scroll, a solid black overlay wipes away left-to-right to expose the text underneath, immediately followed by a neon lime sweep that blazes across the newly revealed word like a highlighter — then vanishes — leaving the text fully legible. It is used sparingly in the About page bio to add dramatic weight to key phrases.
+
+## How the Animation Works
+
+The component renders three stacked layers inside a `position: relative` inline-block wrapper:
+
+1. **Text layer (`z-0`):** the `children` are rendered at the bottom of the stack in `text-tinted`, always present in the DOM but initially hidden behind the overlays above.
+
+2. **Black redaction overlay (`z-10`, `bg-ink`):** a `motion.span` that starts covering the text entirely using `clipPath: inset(0 0 0 0)`. On scroll, it transitions to `clipPath: inset(0 0 0 100%)`, which collapses the clip region from the left — revealing the text beneath in a left-to-right wipe over `0.6s`.
+
+3. **Lime sweep overlay (`z-20`, `bg-lime`):** a second `motion.span` positioned on top of the black layer. It starts at `width: 100%` aligned to the left edge and simultaneously shrinks to `width: 0%` while its `left` position advances to `100%` — creating a bright neon highlight that races across the word and disappears, as if a highlighter pen just swept over it.
+
+Both animated spans share the same `duration: 0.6`, `delay: 0.2`, and `ease: "easeInOut"` transition, keeping them in precise sync. The `viewport: { once: true, margin: "-100px" }` option fires the animation just before the element reaches the visible viewport edge, so it never triggers prematurely at the top of a long page.
+
+## Props
+
+<ParamField path="children" type="ReactNode" required>
+  The inline text content to be revealed. Typically a word or short phrase embedded inside a paragraph. The children are rendered at `z-0` beneath both animation overlays and exposed when the wipe completes.
+</ParamField>
+
+## Usage
+
+```jsx About Page Bio
+import { RedactedReveal } from '../components/casefile/RedactedReveal';
+
+// Inline usage within a paragraph — revealed on scroll
+<p>
+  Subject currently seeking new operational deployment.
+  <RedactedReveal>Highly capable</RedactedReveal>, slightly cynical
+  about tech hype, deeply committed to
+  <RedactedReveal>user experience and accessible design</RedactedReveal>.
+</p>
+```
+
+<Note>
+  `RedactedReveal` is an inline component (`display: inline-block`). It adds `mx-1` horizontal margin so revealed words sit with natural spacing within surrounding sentence text — no extra padding or wrapper spans needed at the call site.
+</Note>
+
+<Warning>
+  This component uses Framer Motion's `whileInView` API, which requires the element to exist inside a scrollable container. It will not animate in sections that are rendered fully above the fold without any scrolling — the viewport intersection observer never fires if the element is already in view on mount and the page has not been scrolled. Move above-the-fold usage to a regular entrance animation (`useAnimation` + `useEffect`) if needed.
+</Warning>

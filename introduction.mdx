@@ -1,0 +1,75 @@
+---
+title: "Developer Dossier: Intelligence-Themed React Portfolio"
+sidebarTitle: "Introduction"
+description: "Developer Dossier is a React + Vite portfolio styled as a classified intelligence dossier with animated components and a dark cyberpunk UI."
+---
+
+Developer Dossier is a single-page portfolio application built with React and Vite, designed for developers who want a portfolio that makes a genuine aesthetic statement. Instead of the standard cards-on-a-white-background approach, it renders your career history, projects, and skills as a classified intelligence case file — complete with redaction effects, security clearance stamps, incident logs, and behavioral analysis reports. The result is a portfolio that communicates personality and craft before a visitor reads a single line of your bio.
+
+## Design Philosophy
+
+The central metaphor is a government intelligence dossier: your career is a subject under long-term surveillance, and every milestone is a logged observation. This framing drives every content decision in the application.
+
+**Security clearance levels** map directly to career progression. The `about.js` data module assigns a classification to each biographical log entry, escalating from `UNCLASSIFIED` (early career exploration) through `RESTRICTED`, `CONFIDENTIAL`, `SECRET`, and finally `TOP SECRET` (senior-level work). The `ACTIVE` classification marks the present. This gives chronological career history a visual hierarchy that feels earned rather than arbitrary.
+
+**Incident logs** are first-class content. The `caseStudies.js` module includes a dedicated `"06. INCIDENT LOG"` section in each case study, listing real bugs encountered during development — complete with severity ratings (`LOW`, `MEDIUM`, `CRITICAL`) and resolution notes. Rather than hiding production issues, the dossier format treats them as evidence of operational competence.
+
+**Behavioral analysis** appears in the About page as a list of personality observations written in detached third-person intelligence prose — phrases like *"Physically unable to ignore off-center buttons or crooked alignment"* and *"Treats accessibility as a baseline requirement, not a feature."* These are sourced from the `b` export in `data/about.js` and reframe the standard "about me" blurb as a psych profile.
+
+## Tech Stack
+
+| Technology | Role |
+|---|---|
+| **React 18** | Component rendering and state management |
+| **React Router** | Hash-based client-side routing (`#/`, `#/about`, etc.) |
+| **Framer Motion** | Scroll-triggered animations, redaction reveal effects |
+| **Tailwind CSS** | Utility-first styling with a custom dark color palette |
+| **Vite** | Build tooling, ES module bundling, and HMR |
+| **IBM Plex Sans Condensed** | Display typeface for headings (`font-display`) |
+| **JetBrains Mono** | Monospace typeface for labels, stamps, and code (`font-mono`) |
+| **Inter** | Prose typeface for body text (`font-prose`) |
+
+## Project Structure
+
+The repository is organized into four top-level directories, each with a distinct responsibility:
+
+- **`components/casefile/`** — Reusable UI components that implement the dossier aesthetic. Includes `ClassificationStamp` (colored bordered labels for clearance levels), `LedMeter` (animated LED-style proficiency bars), `RedactedReveal` (text that sweeps away a black redaction block on scroll), and `TabDivider` (section dividers styled as file folder tabs).
+
+- **`data/`** — Content modules exported as named arrays. Each file (`about.js`, `projects.js`, `skills.js`, `articles.js`, `caseStudies.js`) is independently imported by the bundle and holds all user-editable portfolio content.
+
+- **`pages/`** — Static HTML route shells for each application route. Each shell sets `window.__STATIC_PAGE_ROUTE__` and performs a hash redirect so direct URL access resolves correctly without a server-side router.
+
+- **`assets/`** — The compiled Vite output: `main.js` (bundled React application), `jsx-runtime.js`, `proxy.js` (Framer Motion), and `main.css`.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Animated Components"
+    icon="wand-magic-sparkles"
+    href="/architecture"
+  >
+    Framer Motion powers scroll-triggered LED meter reveals, redaction sweep animations, and viewport-aware entrance transitions throughout the UI.
+  </Card>
+  <Card
+    title="Dossier Aesthetic"
+    icon="shield-halved"
+    href="/introduction"
+  >
+    A dark cyberpunk color palette (lime, violet, magenta, cyan on near-black) combined with classification stamps, incident logs, and behavioral analysis framing gives the portfolio a distinctive intelligence-agency look.
+  </Card>
+  <Card
+    title="Data-Driven Content"
+    icon="database"
+    href="/architecture"
+  >
+    All portfolio content lives in separate JS data modules (`projects.js`, `skills.js`, `articles.js`, etc.) that are independently tree-shakeable. Updating your portfolio means editing data files, not component code.
+  </Card>
+  <Card
+    title="Hash-Based Routing"
+    icon="route"
+    href="/architecture"
+  >
+    React Router uses hash-based navigation so the entire app deploys as a fully static site. Each route has a matching HTML shell that redirects the hash, enabling direct URL access with no server configuration.
+  </Card>
+</CardGroup>

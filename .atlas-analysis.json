@@ -1,0 +1,82 @@
+{
+  "projectType": "frontend",
+  "projectName": "Developer Dossier",
+  "projectDescription": "A React-based developer portfolio with a classified intelligence dossier aesthetic, featuring a dark cyberpunk UI, animated skill meters, case study deep-dives, and a writing archive.",
+  "theme": "luma",
+  "primaryColor": "#84FF00",
+  "lightColor": "#a855f7",
+  "darkColor": "#050507",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Overview",
+        "pages": [
+          "introduction",
+          "architecture"
+        ]
+      },
+      {
+        "group": "Components",
+        "pages": [
+          "components/classification-stamp",
+          "components/led-meter",
+          "components/redacted-reveal",
+          "components/tab-divider"
+        ]
+      },
+      {
+        "group": "Pages & Routes",
+        "pages": [
+          "pages/home",
+          "pages/about",
+          "pages/projects",
+          "pages/skills",
+          "pages/writing",
+          "pages/contact"
+        ]
+      },
+      {
+        "group": "Data & Content",
+        "pages": [
+          "data/about-data",
+          "data/projects-data",
+          "data/skills-data",
+          "data/articles-data",
+          "data/case-studies-data"
+        ]
+      },
+      {
+        "group": "Customization",
+        "pages": [
+          "customization/theming",
+          "customization/adding-content",
+          "customization/deployment"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Classified intelligence dossier aesthetic with dark cyberpunk color palette (ink/violet/lime/magenta/cyan)",
+    "Animated LED proficiency meters with Framer Motion for skills visualization",
+    "RedactedReveal component — animated text unredaction effect on scroll",
+    "ClassificationStamp component with UNCLASSIFIED → TOP SECRET clearance levels",
+    "Scrollable case study deep-dives with sticky sidebar navigation and incident logs",
+    "Split-panel writing archive with live document preview on hover",
+    "Contact form styled as an encrypted transmission terminal",
+    "Hash-based client-side routing via React Router with static HTML pre-rendering for each route",
+    "Vite build system with ES module preloading and Tailwind CSS utility classes",
+    "Responsive layout with IBM Plex Sans Condensed display font and JetBrains Mono for code/UI labels"
+  ],
+  "publicApiSurface": [
+    "ClassificationStamp({ text, variant: 'lime' | 'magenta' | 'violet' | 'cyan', className })",
+    "LedMeter({ level: number, max?: number })",
+    "RedactedReveal({ children })",
+    "TabDivider({ label, className })",
+    "about.js → historyLogs: Array<{ id, date, classification, text, isRedacted? }>, behaviorFlags: string[]",
+    "projects.js → projects: Array<{ id, title, codename, status, tech, description, fullDescription, links, dataSource }>",
+    "skills.js → skillCategories: Array<{ category, skills: Array<{ name, proficiency: 1-5 }> }>",
+    "articles.js → articles: Array<{ id, type, title, date, readTime, abstract, content }>",
+    "caseStudies.js → caseStudies: Array<{ id, title, sections: Array<{ id, title, content, type?, logs? }> }>",
+    "Routes: /, /about, /projects, /skills, /writing, /writing/:id, /case-studies/:id, /contact"
+  ]
+}

@@ -1,0 +1,121 @@
+---
+title: "Deploying Developer Dossier to Any Static Host"
+sidebarTitle: "Deployment"
+description: "How to build Developer Dossier with Vite and deploy the static output to Netlify, Vercel, GitHub Pages, or any static hosting provider."
+---
+
+Developer Dossier is a fully static Vite build. Running `npm run build` produces a `dist/` directory containing all HTML, JavaScript, CSS, and asset files. That directory can be dropped onto any static hosting provider — no Node.js server, no serverless functions, and no database required. If a host can serve an `index.html` file, it can serve Developer Dossier.
+
+## Build Command
+
+Run the following from the project root to produce the production bundle:
+
+```bash
+npm run build
+```
+
+The `dist/` directory will contain:
+
+| File / Directory | Description |
+|---|---|
+| `index.html` | Root entry point served for all requests |
+| `assets/main.js` | Bundled React application |
+| `assets/main.css` | Compiled Tailwind CSS |
+| `assets/jsx-runtime.js` | React JSX runtime |
+| `assets/proxy.js` | Framer Motion proxy module |
+| `components/casefile/*.js` | Individual component modules |
+| `data/*.js` | Content data modules |
+| `pages/*.html` | Static route shells |
+
+## Why No Server Rewrites Are Needed
+
+Developer Dossier uses **hash-based routing**. Every route is expressed as a hash fragment — `#/about`, `#/projects`, `#/writing/art-001` — rather than a real URL path. When a user navigates to `/#/projects`, the browser only sends `/` to the server; the `#/projects` fragment is handled entirely in the browser by React Router. Every request therefore hits `index.html`, and the correct page renders client-side.
+
+This means there is no need for a `_redirects` file (Netlify), a `vercel.json` rewrite rule, or any equivalent server-side configuration on other hosts.
+
+<Note>
+The only exception is if you want to enable pretty direct-URL access for the static HTML shells in `pages/`. For example, navigating directly to `/data/about.html` works because that file exists on disk — but this is optional and not required for normal portfolio browsing.
+</Note>
+
+## Netlify
+
+<Steps>
+  <Step title="Push your repository to GitHub">
+    Make sure your latest code (including any content edits) is pushed to a GitHub repository.
+  </Step>
+  <Step title="Create a new Netlify site">
+    Log in to [netlify.com](https://netlify.com), click **Add new site**, and choose **Import an existing project**.
+  </Step>
+  <Step title="Select your repository">
+    Authorize Netlify to access GitHub and select your Developer Dossier repository.
+  </Step>
+  <Step title="Configure build settings">
+    Set **Build command** to `npm run build` and **Publish directory** to `dist`.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy site**. Netlify will build the project and publish it. From this point on, every push to your default branch triggers an automatic rebuild and redeploy.
+  </Step>
+</Steps>
+
+## Vercel
+
+<Steps>
+  <Step title="Push your repository to GitHub">
+    Ensure your latest changes are committed and pushed.
+  </Step>
+  <Step title="Import the project in Vercel">
+    Log in to [vercel.com](https://vercel.com), click **Add New → Project**, and import your GitHub repository.
+  </Step>
+  <Step title="Confirm the build configuration">
+    Vercel auto-detects Vite projects. Confirm that **Build command** is `npm run build` and **Output directory** is `dist`. No other settings need to change.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy**. Vercel builds and publishes the site, and future pushes to the main branch redeploy automatically.
+  </Step>
+</Steps>
+
+## GitHub Pages
+
+<Steps>
+  <Step title="Enable GitHub Pages in your repository">
+    In your repository, go to **Settings → Pages**. Under **Source**, select **GitHub Actions**.
+  </Step>
+  <Step title="Create the workflow file">
+    Create the file `.github/workflows/deploy.yml` in your repository with the following content:
+
+```yaml
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4
+```
+  </Step>
+  <Step title="Commit and push the workflow file">
+    Commit `.github/workflows/deploy.yml` and push to `main`. GitHub Actions will trigger immediately, build the project, and publish the `dist/` output to your Pages URL.
+  </Step>
+  <Step title="Verify the deployment">
+    Navigate to the Pages URL shown in **Settings → Pages** to confirm the site is live. Every subsequent push to `main` will re-run the workflow.
+  </Step>
+</Steps>
+
+## Custom Domain
+
+All of the above platforms support custom domains through their respective dashboards — typically a DNS CNAME or A record pointing to the host's servers. No configuration changes are needed inside the Developer Dossier project itself; because routing is hash-based, the app works correctly regardless of the domain it is served from.
+
+<Tip>
+For the fastest first-load performance, enable asset compression (gzip/brotli) and set long cache headers on the `assets/` directory — these files have content-hashed filenames so they can be cached indefinitely.
+</Tip>
