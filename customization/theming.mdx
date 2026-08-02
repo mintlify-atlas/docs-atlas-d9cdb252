@@ -1,7 +1,7 @@
 ---
 title: "Theming: Color Palette, Typography, and CSS Utility Classes"
 sidebarTitle: "Theming"
-description: "A reference for Developer Dossier's full color palette, three-font typography system, and custom Tailwind utility classes like glass-panel and ambient-glow."
+description: "Reference for Developer Dossier's color palette, three-font typography system, and custom CSS utility classes like glass-panel and ambient-glow."
 ---
 
 Developer Dossier is built on a dark cyberpunk design system powered by Tailwind CSS. The palette is organized around two background levels — **ink** (the deepest near-black) and **slate** (a slightly lighter panel surface) — plus five named accent colors: **lime**, **violet**, **magenta**, **cyan**, and **tinted**. Every component in the codebase applies these colors exclusively through Tailwind utility classes, ensuring visual consistency and making global changes a single-line edit.
@@ -56,7 +56,7 @@ Several compound styles are defined as named utility classes in `assets/main.css
 A frosted glass card effect intended for floating panels, modals, and info cards. Applies a translucent slate background, a violet-tinted border, a drop shadow, and backdrop blur.
 
 ```
-border border-violet/30 bg-slate/80 shadow backdrop-blur-md
+border border-violet/20 bg-slate/80 shadow backdrop-blur-md
 ```
 
 ### `.bg-classified-pattern`
@@ -75,7 +75,6 @@ A large, extremely subtle radial gradient centered on the viewport that gives th
 
 ```
 background: radial-gradient(circle at center, rgba(124,58,237,.03) 0%, transparent 70%)
-background-attachment: fixed
 ```
 
 ### `.custom-scrollbar`

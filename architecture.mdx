@@ -58,12 +58,16 @@ Vite compiles the entire React and Tailwind source tree into a small set of stat
 ES module preloading is declared in every HTML shell via `<link rel="modulepreload">` tags. This tells the browser to fetch and parse the JS modules in parallel before the main script executes, reducing the time-to-interactive on first load:
 
 ```html
+<link rel="modulepreload" crossorigin href="./useScreenInit.js">
 <link rel="modulepreload" crossorigin href="./assets/jsx-runtime.js">
 <link rel="modulepreload" crossorigin href="./assets/proxy.js">
 <link rel="modulepreload" crossorigin href="./components/casefile/ClassificationStamp.js">
 <link rel="modulepreload" crossorigin href="./data/about.js">
+<link rel="modulepreload" crossorigin href="./components/casefile/RedactedReveal.js">
+<link rel="modulepreload" crossorigin href="./components/casefile/TabDivider.js">
 <link rel="modulepreload" crossorigin href="./data/projects.js">
 <link rel="modulepreload" crossorigin href="./data/skills.js">
+<link rel="modulepreload" crossorigin href="./components/casefile/LedMeter.js">
 <link rel="modulepreload" crossorigin href="./data/articles.js">
 <link rel="modulepreload" crossorigin href="./data/caseStudies.js">
 ```

@@ -12,18 +12,18 @@ Each project conforms to the following interface. Required fields are `id`, `tit
 
 ```ts
 interface Project {
-  id: string;            // e.g. "prj-001"
-  title: string;         // Display name shown on the project card
-  codename: string;      // Operational codename in ALL CAPS
+  id: string;             // e.g. "prj-001"
+  title: string;          // Display name shown on the project card
+  codename: string;       // Operational codename in ALL CAPS
   status: 'SHIPPED' | 'ACTIVE' | 'HAUNTED' | 'DORMANT';
-  tech: string[];        // Technology tags rendered as badges
-  description: string;   // Short one-line description for the card
-  fullDescription: string; // Full paragraph for the detail / expanded view
+  tech: string[];         // Technology tags rendered as badges
+  description: string;    // Short one-line description for the card
+  fullDescription?: string; // Optional full paragraph for the detail / expanded view
   links: {
-    demo?: string;       // URL to the live deployment
-    source?: string;     // URL to the source repository
-    writeup?: string;    // Path to a case study: "/case-studies/:id"
-    readme?: string;     // URL to the README or external docs
+    demo?: string;        // URL to the live deployment
+    source?: string;      // URL to the source repository
+    writeup?: string;     // Path to a case study: "/case-studies/:id"
+    readme?: string;      // URL to the README or external docs
   };
   dataSource: 'LIVE' | 'SAMPLE' | 'MOCKED';
 }
@@ -51,13 +51,13 @@ The portfolio currently documents four projects.
 | `prj-003` | Legacy API Wrapper | NECROMANCER | HAUNTED | Python, FastAPI, SOAP, GraphQL |
 | `prj-004` | Terminal Portfolio | ECHO-DIR | DORMANT | Vue, CSS Variables, Vite |
 
-**Specter Analytics (`prj-001`)** — A privacy-first analytics dashboard. `dataSource: "LIVE"`. Has a full case study linked at `/case-studies/specter`.
+**Specter Analytics (`prj-001`)** — A privacy-first analytics dashboard. `dataSource: "LIVE"`. Links: `demo`, `source`, and `writeup` (`/case-studies/specter`). Includes a `fullDescription` for the expanded detail view.
 
-**Nexus Sync (`prj-002`)** — A real-time state synchronization engine built on Rust and WebSockets. `dataSource: "SAMPLE"`. Active development in progress.
+**Nexus Sync (`prj-002`)** — A real-time state synchronization engine built on Rust and WebSockets. `dataSource: "SAMPLE"`. Links: `source` and `readme` only — no live demo available.
 
-**Legacy API Wrapper (`prj-003`)** — A modern GraphQL layer over a 20-year-old SOAP API. `dataSource: "MOCKED"`. Status: HAUNTED — maintained but approached carefully.
+**Legacy API Wrapper (`prj-003`)** — A modern GraphQL layer over a 20-year-old SOAP API. `dataSource: "MOCKED"`. Links: `source` only. Status: HAUNTED — maintained but approached carefully.
 
-**Terminal Portfolio (`prj-004`)** — A previous portfolio site rendered as a fake CLI terminal. `dataSource: "LIVE"`. Retired and preserved as a historical artifact.
+**Terminal Portfolio (`prj-004`)** — A previous portfolio site rendered as a fake CLI terminal. `dataSource: "LIVE"`. Links: `demo` and `source`. Retired and preserved as a historical artifact.
 
 ## Linking to a Case Study
 

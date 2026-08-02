@@ -1,5 +1,5 @@
 ---
-title: "Deploying Developer Dossier to Any Static Host"
+title: "Deploy Developer Dossier to Netlify, Vercel, or GitHub Pages"
 sidebarTitle: "Deployment"
 description: "How to build Developer Dossier with Vite and deploy the static output to Netlify, Vercel, GitHub Pages, or any static hosting provider."
 ---
@@ -88,9 +88,16 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -101,7 +108,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-      - uses: actions/deploy-pages@v4
+      - id: deployment
+        uses: actions/deploy-pages@v4
 ```
   </Step>
   <Step title="Commit and push the workflow file">
